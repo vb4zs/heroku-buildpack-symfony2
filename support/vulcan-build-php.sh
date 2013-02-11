@@ -21,6 +21,10 @@ echo "+ Fetching libmemcached libraries..."
 mkdir -p /app/local
 curl -L "https://s3.amazonaws.com/${S3_BUCKET}/libmemcached-${LIBMEMCACHED_VERSION}.tar.gz" -o - | tar xz -C /app/local
 
+echo "+ Fetching libicu libraries..."
+mkdir -p /app/local
+curl -L "https://s3.amazonaws.com/${S3_BUCKET}/libicu-${LIBICU_VERSION}.tar.gz" -o - | tar xz -C /app/local
+
 echo "+ Fetching PHP sources..."
 #fetch php, extract
 curl -L http://us.php.net/get/php-$PHP_VERSION.tar.bz2/from/www.php.net/mirror -o - | tar xj
@@ -45,12 +49,14 @@ echo "+ Configuring PHP..."
 --enable-pcntl \
 --enable-soap=shared \
 --enable-zip \
+--enable-intl \
 --with-bz2 \
 --with-curl \
 --with-gd \
 --with-gettext \
 --with-jpeg-dir \
 --with-mcrypt=/app/local \
+--with-icu-dir=/app/local \
 --with-iconv \
 --with-mhash \
 --with-mysql \

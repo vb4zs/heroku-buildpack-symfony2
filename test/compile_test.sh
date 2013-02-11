@@ -22,6 +22,10 @@ testCompile()
 	assertCaptured "libmemcached v${LIBMEMCACHED_VERSION}"
 	assertTrue "libmemcached should exist" "[ -e ${BUILD_DIR}/local/lib/libmemcached.so ]"
 
+	assertCaptured "-----> Installing libicu"
+	assertCaptured "libicu v${LIBICU_VERSION}"
+	assertTrue "icu-config should exist" "[ -e ${BUILD_DIR}/local/bin/icu-config ]"
+
 	assertCaptured "-----> Installing PHP"
 	assertCaptured "PHP v${PHP_VERSION}"
 	assertTrue "php-fpm should be executable" "[ -x ${BUILD_DIR}/vendor/php/sbin/php-fpm ]"
@@ -64,6 +68,9 @@ testCachedCompile()
 
 	assertCaptured "cached libmemcached v${LIBMEMCACHED_VERSION}"
 	assertTrue "libmemcached should exist" "[ -e ${BUILD_DIR}/local/lib/libmemcached.so ]"
+
+	assertCaptured "cached libicu v${LIBICU_VERSION}"
+	assertTrue "icu-config should exist" "[ -e ${BUILD_DIR}/local/bin/icu-config ]"	
 
 	assertCaptured "cached PHP v${PHP_VERSION}"
 	assertTrue "php-fpm should be executable" "[ -x ${BUILD_DIR}/vendor/php/sbin/php-fpm ]"
