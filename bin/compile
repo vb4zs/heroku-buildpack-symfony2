@@ -258,6 +258,11 @@ echo "Booting nginx"
 # Override config files if provided in app.
 if [ -d /app/conf ]; then
 
+	# Symfony2 database detection
+	if [ -r /app/conf/parameters_prod.yml.erb ]; then
+		erb /app/conf/parameters_prod.yml.erb > /app/conf/parameters.yml
+	fi
+
 	if [ -d /app/conf/etc.d ]; then
 		cp -f /app/conf/etc.d/* /app/vendor/php/etc.d/
 	fi
