@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -e
+
+if [ "$LIBICU_VERSION" == "" ]; then
+  echo "must set LIBICU_VERSION, i.e LIBICU_VERSION=50.1.2"
+  exit 1
+fi
+
+basedir="$( cd -P "$( dirname "$0" )" && pwd )"
+
+# make a temp directory
+tempdir="$( mktemp -t libicu_XXXX )"
+rm -rf $tempdir
+mkdir -p $tempdir
+pushd $tempdir
+
+# download and extract icu4c
+curl -L "http://download.icu-project.org/files/icu4c/50.1.2/icu4c-50_1_2-src.tgz" -o - | tar xz
+
+# build and package icu4c for heroku
+vulcan build -v -s icu -o $tempdir/libicu-$LIBICU_VERSION.tar.gz -p /app/local -c './source/configure --prefix=/app/local && make install' 
+
+popd
+
+cp $tempdir/libicu-$LIBICU_VERSION.tar.gz .
+
+echo "+ Binaries available at ./libicu-$LIBICU_VERSION.tar.gz"
+echo "+ Upload this package to Amazon S3."
+
+# upload to s3
+#s3cmd put -rr $tempdir/*.tar.gz s3://$S3_BUCKET
