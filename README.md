@@ -1,9 +1,9 @@
-Nginx+PHP-FPM build pack
+Symfony2 build pack (ex. Nginx+PHP-FPM build pack)
 ========================
 
-This is a build pack bundling PHP and Nginx for Heroku apps.
+This is a build pack bundling Symfony2 for Heroku apps.
 
-- Includes additional extensions: apc, memcache, memcached, mysql, pgsql, phpredis, mcrypt, newrelic, and sqlite.
+- Includes additional extensions: apc, memcache, memcached, mysql, pgsql, intl, phpredis, mcrypt, newrelic, and sqlite.
 - Dependency management handled by [Composer][ch].
 - [PHP Info][phpinfo].
 
@@ -43,6 +43,16 @@ $ export S3_BUCKET="heroku-buildpack-php-tyler" # set to your S3 bucket.
 $ source support/set-env.sh
 ````
 Edit `bin/compile` and `support/set-env.sh` to reflect the correct S3 bucket.
+
+### ICU
+ICU library is neccessary for running php_intl.so extensions which is also a one of dependenecies for Symfony2 and sonata-project/intl-bundle and other Sonata bundles.
+
+Run:
+````
+$ support/package_icu
+````
+The binary package will be produced in the current directory. Upload it to Amazon S3.
+
 
 ### Nginx
 Run:
@@ -115,12 +125,12 @@ Export your new relic license key as the `NEW_RELIC_LICENSE_KEY` env variable us
 ### Deploying
 To use this buildpack, on a new Heroku app:
 ````
-heroku create -s cedar -b git://github.com/iphoting/heroku-buildpack-php-tyler.git
+heroku create -s cedar -b git://github.com/sumkincpp/heroku-buildpack-php-tyler.git
 ````
 
 On an existing app:
 ````
-heroku config:add BUILDPACK_URL=git://github.com/iphoting/heroku-buildpack-php-tyler.git
+heroku config:add BUILDPACK_URL=git://github.com/sumkincpp/heroku-buildpack-php-tyler.git
 heroku config:add PATH="/app/vendor/bin:/app/local/bin:/app/vendor/nginx/sbin:/app/vendor/php/bin:/app/vendor/php/sbin:/usr/local/bin:/usr/bin:/bin"
 ````
 
@@ -173,9 +183,11 @@ Source: <https://github.com/ryanbrainard/heroku-buildpack-testrunner>
 Credits
 -------
 
+Symfony2 tweaks added by [Fedor V][scpp].
 Original buildpack adapted and modified for Nginx + PHP support by [Ronald Ip][iht]. Buildpack originally inspired, and forked from <https://github.com/heroku/heroku-buildpack-php>.
 
 Credits to original authors.
 
+[scpp]: http://qosys.info/
 [iht]: http://ronaldip.com/
 
