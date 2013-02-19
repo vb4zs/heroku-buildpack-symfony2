@@ -125,12 +125,12 @@ Export your new relic license key as the `NEW_RELIC_LICENSE_KEY` env variable us
 ### Deploying
 To use this buildpack, on a new Heroku app:
 ````
-heroku create -s cedar -b git://github.com/sumkincpp/heroku-buildpack-php-tyler.git
+heroku create -s cedar -b git://github.com/sumkincpp/heroku-buildpack-symfony2.git
 ````
 
 On an existing app:
 ````
-heroku config:add BUILDPACK_URL=git://github.com/sumkincpp/heroku-buildpack-php-tyler.git
+heroku config:add BUILDPACK_URL=git://github.com/sumkincpp/heroku-buildpack-symfony2.git
 heroku config:add PATH="/app/vendor/bin:/app/local/bin:/app/vendor/nginx/sbin:/app/vendor/php/bin:/app/vendor/php/sbin:/usr/local/bin:/usr/bin:/bin"
 ````
 
@@ -156,7 +156,7 @@ Testing the Buildpack
 ---------------------
 Setup the test environment on Heroku as follows:
 ```
-$ cd heroku-buildpack-php-tyler/
+$ cd heroku-buildpack-symfony2/
 $ heroku create -s cedar -b git://github.com/ryanbrainard/heroku-buildpack-testrunner.git
 Creating deep-thought-1234... done, stack is cedar
 http://deep-thought-1234.herokuapp.com/ | git@heroku.com:deep-thought-1234.git
@@ -190,4 +190,3 @@ Credits to original authors.
 
 [scpp]: http://qosys.info/
 [iht]: http://ronaldip.com/
-
