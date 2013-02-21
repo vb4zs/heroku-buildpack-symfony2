@@ -5,7 +5,7 @@ set -e
 set -o pipefail
 
 # START CONFIG
-NGINX_VERSION=1.2.6
+NGINX_VERSION=1.2.7
 LIBMCRYPT_VERSION=2.5.8
 LIBMEMCACHED_VERSION=1.0.7
 LIBICU_VERSION=50.1.2
@@ -66,7 +66,7 @@ export COMPOSER_HOME="${CACHE_DIR}/.composer"
 # include .files when moving things around
 shopt -s dotglob
 
-mkdir -p $BUILD_DIR $CACHE_DIR ${BUNDLE_DIR} ${BUILD_DIR}/local ${BUILD_DIR}/vendor/bin ${COMPOSER_HOME}
+mkdir -p $BUILD_DIR $CACHE_DIR ${BUNDLE_DIR} ${BUILD_DIR}/local ${BUILD_DIR}/vendor/bin ${COMPOSER_HOME} ${BUILD_DIR}/.profile.d
 
 pushd ${BUNDLE_DIR} > /dev/null
 
@@ -246,6 +246,7 @@ cp ${BUILD_DIR}/vendor/php/php/fpm/status.html ${BUILD_DIR}/status.html
 cp $LP_DIR/conf/php.ini ${BUILD_DIR}/vendor/php/php.ini
 cp -a $LP_DIR/conf/etc.d ${BUILD_DIR}/vendor/php/
 cp $LP_DIR/conf/nginx.conf.erb ${BUILD_DIR}/vendor/nginx/conf/nginx.conf.erb
+cp -n ${LP_DIR}/.profile.d/* ${BUILD_DIR}/.profile.d/
 #erb $LP_DIR/conf/nginx.conf.erb > ${BUILD_DIR}/vendor/nginx/conf/nginx.conf
 
 echo "-----> Installing boot script"
@@ -262,6 +263,8 @@ if [ -d /app/conf ]; then
 	if [ -r /app/app/config/parameters_prod.yml.erb ]; then
 		erb /app/app/config/parameters_prod.yml.erb > /app/app/config/parameters.yml
 	fi
+
+	mkdir -p /app/conf/nginx.d
 
 	if [ -d /app/conf/etc.d ]; then
 		cp -f /app/conf/etc.d/* /app/vendor/php/etc.d/
@@ -283,6 +286,15 @@ fi
 
 # Set correct port variable.
 erb /app/vendor/nginx/conf/nginx.conf.erb > /app/vendor/nginx/conf/nginx.conf
+
+if [ -d /app/conf/nginx.d ]; then
+	# Parse .erb into .conf.
+	for f in /app/conf/nginx.d/*.erb
+	do
+		erb "\${f}" > "\${f}.conf"
+	done
+fi
+
 # Set NEWRELIC key
 if [ -x "/app/local/bin/newrelic-license" ]; then
 	/app/local/bin/newrelic-license
@@ -301,7 +313,7 @@ for var in \`env | cut -f1 -d=\`; do
 	echo "env[\$var] = \\$\${var}" >> /app/vendor/php/etc/php-fpm.conf
 done
 
-touch /app/vendor/nginx/logs/access.log /app/vendor/nginx/logs/error.log /app/vendor/php/var/log/php-fpm.log /app/local/var/log/newrelic/newrelic-daemon.log /app/local/var/log/newrelic/php_agent.log
+touch /app/vendor/nginx/logs/access.log /app/vendor/nginx/logs/error.log /app/vendor/php/var/log/php-fpm.log /app/vendor/php/var/log/php-errors.log /app/local/var/log/newrelic/newrelic-daemon.log /app/local/var/log/newrelic/php_agent.log
 mkdir -p client_body_temp fastcgi_temp proxy_temp scgi_temp uwsgi_temp
 (tail -f -n 0 /app/vendor/nginx/logs/*.log /app/vendor/php/var/log/*.log /app/local/var/log/newrelic/*.log &)
 
