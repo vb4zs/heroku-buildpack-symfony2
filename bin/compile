@@ -208,6 +208,8 @@ popd > /dev/null
 
 # Composer Installation
 pushd ${BUILD_DIR} > /dev/null
+
+
 if [ -f "composer.json" ]
 then
 	echo "-----> Installing dependencies using Composer"
@@ -227,6 +229,34 @@ then
 
 	# Deactivating plugins from php.ini (they won't be found)
 	sed -i 's/extension=\(\w*\.so\)/;extension=\1/g' ${BUILD_DIR}/vendor/php/bin/php.ini
+
+
+	if [ ! -r ${BUILD_DIR}/app/config/parameters.yml ]; then
+		if [ ! -r ${BUILD_DIR}/app/config/parameters_prod.yml.erb ]; then
+			erb ${BUILD_DIR}/app/config/parameters_prod.yml.erb > ${BUILD_DIR}/app/config/parameters.yml
+		else
+
+DEFAULT_PARAMETERS_FILE=`cat <<'DELIMETR'
+parameters:
+    database_driver:   pdo_mysql
+    database_host:     127.0.0.1
+    database_port:     ~
+    database_name:     lpc
+    database_user:     root
+    database_password: root
+
+    mailer_transport:  smtp
+    mailer_host:       127.0.0.1
+    mailer_user:       ~
+    mailer_password:   ~
+
+    locale:            en
+    secret:            /TmH+UZZKy+s9KQXCau6GJiu58N8L+PS1Gvon	
+DELIMETR`
+
+			echo "${DEFAULT_PARAMETERS_FILE}" > ${BUILD_DIR}/app/config/parameters.yml
+		fi
+	fi
 
 	# Debug info for php.ini
 	LD_LIBRARY_PATH="${BUILD_DIR}/local/lib" ${BUILD_DIR}/vendor/php/bin/php -r "phpinfo();" | grep 'Configuration File'
@@ -300,6 +330,7 @@ fi
 
 # Set NEWRELIC key
 if [ "\${NEW_RELIC_LICENSE_KEY}" -a -x "/app/local/bin/newrelic-license" ]; then
+	echo "NEWRELIC license setted to ${NEW_RELIC_LICENSE_KEY}"
 	/app/local/bin/newrelic-license
 fi
 
