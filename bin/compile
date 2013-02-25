@@ -6,10 +6,10 @@ set -o pipefail
 
 # START CONFIG
 NGINX_VERSION=1.2.7
+LIBICU_VERSION=50.1.2
 LIBMCRYPT_VERSION=2.5.8
 LIBMEMCACHED_VERSION=1.0.7
-LIBICU_VERSION=50.1.2
-PHP_VERSION=5.4.11
+PHP_VERSION=5.4.12
 NEWRELIC_VERSION=2.9.5.78
 S3_BUCKET=existencebkct
 # END CONFIG
@@ -291,7 +291,10 @@ if [ -d /app/conf/nginx.d ]; then
 	# Parse .erb into .conf.
 	for f in /app/conf/nginx.d/*.erb
 	do
-		erb "\${f}" > "\${f}.conf"
+		if [ -r "\${f}" ];
+		then
+			erb "\${f}" > "\${f}.conf"
+		fi
 	done
 fi
 
