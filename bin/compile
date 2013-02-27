@@ -279,6 +279,15 @@ cp $LP_DIR/conf/nginx.conf.erb ${BUILD_DIR}/vendor/nginx/conf/nginx.conf.erb
 cp -n ${LP_DIR}/.profile.d/* ${BUILD_DIR}/.profile.d/
 #erb $LP_DIR/conf/nginx.conf.erb > ${BUILD_DIR}/vendor/nginx/conf/nginx.conf
 
+echo "-----> Installing assets"
+# Sets the debug flag depending on Sf2 env (declared at the begeining of the file)
+export SF_DEBUG="--no-debug"
+export SF_ENV="prod"
+
+# Deploying assets
+LD_LIBRARY_PATH="${BUILD_DIR}/local/lib" ${BUILD_DIR}/vendor/php/bin/php app/console assets:install web --env=${SF_ENV}
+LD_LIBRARY_PATH="${BUILD_DIR}/local/lib" ${BUILD_DIR}/vendor/php/bin/php app/console assetic:dump ${SF_DEBUG} --env=${SF_ENV}
+
 echo "-----> Installing boot script"
 cd $BUILD_DIR
 cat >>boot.sh <<EOF
