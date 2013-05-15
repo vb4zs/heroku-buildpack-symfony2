@@ -287,8 +287,8 @@ export SF_ENV="prod"
 
 # Deploying assets - for some reason cd is neccesary
 cd ${BUILD_DIR}
-echo "-------> Running: app/console assets:install --env=${SF_ENV}"
-LD_LIBRARY_PATH="${BUILD_DIR}/local/lib" ${BUILD_DIR}/vendor/php/bin/php ${BUILD_DIR}/app/console assets:install
+echo "-------> Running: app/console assets:install --symlink --env=${SF_ENV}"
+LD_LIBRARY_PATH="${BUILD_DIR}/local/lib" ${BUILD_DIR}/vendor/php/bin/php ${BUILD_DIR}/app/console assets:install --symlink
 echo "-------> Running: app/console assetic:dump ${SF_DEBUG} --env=${SF_ENV}"
 LD_LIBRARY_PATH="${BUILD_DIR}/local/lib" ${BUILD_DIR}/vendor/php/bin/php ${BUILD_DIR}/app/console assetic:dump
 
